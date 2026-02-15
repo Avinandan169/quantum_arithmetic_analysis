@@ -19,10 +19,9 @@ The study includes:
 
 quantum-arithmetic-analysis/
 │
-├── src/                # Core circuit implementations
-├── experiments/        # Experimental comparison scripts
-├── results/            # Generated graphs
-├── notebooks/          # (Optional) Interactive demo
+├── src/               # Core circuit implementations
+├── experiments/       # Experimental comparison scripts
+├── results/           # Generated graphs
 ├── README.md
 └── requirements.txt
 
