@@ -17,6 +17,7 @@ The study includes:
 
 ## Project Structure
 
+```
 quantum-arithmetic-analysis/
 │
 ├── src/               # Core circuit implementations
@@ -24,6 +25,7 @@ quantum-arithmetic-analysis/
 ├── results/           # Generated graphs
 ├── README.md
 └── requirements.txt
+```
 
 # Running Experiments
 
