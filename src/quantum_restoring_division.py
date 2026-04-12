@@ -19,44 +19,45 @@ def ripple_subtractor(qc, a, b):
         qc.cx(b[i], a[i])  # a = a XOR b (placeholder behavior)
 
 
-def quantum_division(dividend, divisor):
+def quantum_restoring_division(dividend, divisor):
     n = max(dividend.bit_length(), divisor.bit_length())
 
-    # Registers
-    q_dividend = QuantumRegister(n, name='dividend')
-    q_divisor = QuantumRegister(n, name='divisor')
-    q_quotient = QuantumRegister(n, name='quotient')
-    c = ClassicalRegister(n, name='c')
+    q_dividend = QuantumRegister(n, 'dividend')
+    q_divisor = QuantumRegister(n, 'divisor')
+    q_quotient = QuantumRegister(n, 'quotient')
+    c = ClassicalRegister(n, 'c')
 
     qc = QuantumCircuit(q_dividend, q_divisor, q_quotient, c)
 
-    # Encode inputs
     encode_number(qc, q_dividend, dividend)
     encode_number(qc, q_divisor, divisor)
 
-    # Classical-style division logic (controlled loop)
     remainder = dividend
-    quotient = 0
 
     for i in range(n):
-        if remainder >= divisor:
-            remainder -= divisor
-            quotient |= (1 << i)
 
-            # Reflect subtraction in circuit (symbolic)
-            ripple_subtractor(qc, q_dividend, q_divisor)
+        #step 1: subtract
+        remainder -= divisor
+        ripple_subtractor(qc, q_dividend, q_divisor)
 
-            # Mark quotient bit
+        #step 2: check
+        if remainder < 0:
+            #step 3: restore
+            remainder += divisor
+            ripple_subtractor(qc, q_dividend, q_divisor)  # symbolic add
+
+        else:
+            #step 4: set quotient bit
             qc.x(q_quotient[i])
 
-    # Measure quotient
     qc.measure(q_quotient, c)
-
     return qc
 
 
-# Example
-qc = quantum_division(6, 2)
+#example
+dividend = int(input("Enter dividend: "))
+divisor = int(input("Enter divisor: "))
+qc = quantum_restoring_division(dividend, divisor)
 
 sim = AerSimulator()
 compiled = transpile(qc, sim)
